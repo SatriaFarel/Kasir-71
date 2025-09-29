@@ -1,0 +1,1 @@
+[24-Sep-2025 01:15:46 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at C:\laragon\www\MKK\Satria Farel\Kasir 71\src\vendor\tecnickcom\tcpdf\include\tcpdf_static.php:345) in C:\laragon\www\MKK\Satria Farel\Kasir 71\public\admin\function\printLaporan.php on line 114

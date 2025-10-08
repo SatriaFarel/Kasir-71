@@ -31,8 +31,7 @@ if (isset($_GET["ket"])) {
                 p.f_modal, 
                 p.f_keuntungan, 
                 p.f_tanggal_expired, 
-                p.f_deskripsi,
-                p.f_kodep
+                p.f_deskripsi
               FROM t_produk p 
               INNER JOIN t_kategori k ON p.f_id_kategori = k.f_id 
               WHERE p.f_id_kategori = '$idK'
@@ -59,21 +58,21 @@ if (isset($_GET["ket"])) {
   }
 }
 
-if (isset($_GET["kodep"]) && isset($_GET["btn_ker"])) {
-  $kodep = $_GET["kodep"];
+if (isset($_GET["id"]) && isset($_GET["btn_ker"])) {
+  $id = $_GET["id"];
   echo "<script>
-        let qty = prompt('Masukkan jumlah produk untuk barcode: $kodep');
+        let qty = prompt('Masukkan jumlah produk untuk barcode: $id');
         if (qty !== null) {
-            // redirect ke keranjang.php dengan 2 parameter (kodep & quantity)
-            window.location.href = 'keranjang.php?kodep=" . $kodep . "&quantity=' + encodeURIComponent(qty);
+            // redirect ke keranjang.php dengan 2 parameter (id & quantity)
+            window.location.href = 'keranjang.php?id=" . $id . "&quantity=' + encodeURIComponent(qty);
         } else {
             // kalau dibatalin, balik ke index
             window.location.href = 'index.php';
         }
     </script>";
 
-  // Redirect ke keranjang.php dengan parameter kodep dan quantity
-  header("Location: keranjang.php?kodep=$kodep&quantity=$quantity");
+  // Redirect ke keranjang.php dengan parameter id dan quantity
+  header("Location: keranjang.php?id=$id&quantity=$quantity");
   exit();
 }
 
@@ -223,7 +222,7 @@ $totalPages = ceil($totalData / $limit);
                 ?>
 
                 <?php if ($row['f_stok'] > 0 && !$isExpired): ?>
-                  <button onclick="tambahKeranjang('<?= $row['f_kodep']; ?>')"
+                  <button onclick="tambahKeranjang('<?= $row['f_id']; ?>')"
                     title="Tambah ke Keranjang"
                     class="flex items-center justify-center px-3 py-2 text-sm font-medium text-white bg-yellow-500 rounded hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-300">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -313,16 +312,16 @@ $totalPages = ceil($totalData / $limit);
   </section>
   <?php include("layout/footer.php"); ?>
   <script>
-    function tambahKeranjang(kodep){
-      let tambahan = prompt('Masukkan jumlah produk untuk barcode: '+ kodep );
-        if (tambahan !== null) {
-            // redirect ke keranjang.php dengan 2 parameter (kodep & quantity)
-            window.location.href = 'keranjang.php?kodep=' + kodep + '&quantity=' + encodeURIComponent(tambahan);
-        } else {
-            // kalau dibatalin, balik ke index
-            window.location.href = 'index.php';
-        }
-     }
+    function tambahKeranjang(id) {
+      let tambahan = prompt('Masukkan jumlah produk untuk barcode: ' + id);
+      if (tambahan !== null) {
+        // redirect ke keranjang.php dengan 2 parameter (id & quantity)
+        window.location.href = 'keranjang.php?id=' + id + '&quantity=' + encodeURIComponent(tambahan);
+      } else {
+        // kalau dibatalin, balik ke index
+        window.location.href = 'index.php';
+      }
+    }
   </script>
 </body>
 

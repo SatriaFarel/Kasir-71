@@ -148,7 +148,6 @@
         $id = $_POST["id"];
         $gambar = $_POST["gambar"] ?? "";
         $name = htmlspecialchars($_POST["name"]) ?? "";
-        $kodep = htmlspecialchars($_POST["kode_produk"]) ?? "";
         $price = htmlspecialchars($_POST["price"]) ?? "";
         $modal = htmlspecialchars($_POST["modal_price"]) ?? "";
         $stock = htmlspecialchars($_POST["stock"]) ?? "";
@@ -157,12 +156,12 @@
         $deskripsi = htmlspecialchars($_POST["description"]) ?? "";
     
         if(empty($name) || empty($price) || empty($modal) || $stock < 0 || empty($kategori) 
-            || empty($tgl_exp) || empty($deskripsi) || empty($kodep)){
+            || empty($tgl_exp) || empty($deskripsi) ){
             echo "<script>alert('Data yang dikirimkan belum lengkap!!');document.location.href='../product.php'";
         }
 
         // Cek apakah username atau email sudah ada di database
-        $cek = mysqli_query($conn, "SELECT * FROM t_produk WHERE f_nama_produk = '$name' AND f_id != '$id' AND f_kodep = '$kodep'");
+        $cek = mysqli_query($conn, "SELECT * FROM t_produk WHERE f_nama_produk = '$name' AND f_id != '$id'");
         if (mysqli_num_rows($cek) > 0) {
             echo "<script>alert('Produk sudah terdaftar!');document.location.href='../product.php';</script>";
             exit;
@@ -176,7 +175,6 @@
     
         $query = "UPDATE t_produk 
           SET f_nama_produk = '$name', 
-              f_kodep = '$kodep',
               f_tanggal_expired = '$tgl_exp', 
               f_stok = '$stock', 
               f_modal = '$modal', 
@@ -427,20 +425,6 @@
                         </svg>
                         </div>
                         <input type="text" id="name" name="name" class="mt-1 block w-full pl-10 border border-gray-300 rounded-lg shadow-sm p-2.5 focus:ring-blue-500 focus:border-blue-500" value="<?= $row['f_nama_produk'];?>" required>
-                    </div>
-                    </div>
-
-                    <!-- Kode Produk -->
-                    <div class="sm:col-span-2">
-                    <label for="kode_produk" class="block text-sm font-medium text-gray-700">Kode Produk</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <!-- Barcode Icon -->
-                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h1m2 0h1m2 0h1m2 0h1m2 0h1m2 0h1M4 17h16M4 12h16" />
-                        </svg>
-                        </div>
-                        <input type="text" id="kode_produk" name="kode_produk" class="mt-1 block w-full pl-10 border border-gray-300 rounded-lg shadow-sm p-2.5 focus:ring-blue-500 focus:border-blue-500" value="<?= $row['f_kodep'];?>" required>
                     </div>
                     </div>
 

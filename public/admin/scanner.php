@@ -6,8 +6,8 @@ if ($barcode) {
     echo "<script>
         let tambahan = prompt('Masukkan jumlah produk untuk barcode: $barcode');
         if (tambahan !== null) {
-            // redirect ke keranjang.php dengan 2 parameter (kodep & quantity)
-            window.location.href = 'keranjang.php?kodep=" . $barcode . "&quantity=' + encodeURIComponent(tambahan);
+            // redirect ke keranjang.php dengan 2 parameter (id & quantity)
+            window.location.href = 'keranjang.php?id=" . $barcode . "&quantity=' + encodeURIComponent(tambahan);
         } else {
             // kalau dibatalin, balik ke index
             window.location.href = 'index.php';

@@ -47,18 +47,42 @@ if (isset($_GET["IDM"])) {
     }
 }
 
-if  (isset($_GET["IDP"])) {
+if (isset($_GET["IDP"])) {
     $id = $_GET["IDP"];
 
+    // Cek stok
     $cekStok = mysqli_query($conn, "SELECT * FROM t_produk WHERE f_id = '$id'");
-    $cekStok2 = mysqli_fetch_assoc($cekStok)["f_stok"];
+    $data = mysqli_fetch_assoc($cekStok);
+    $stok = $data["f_stok"];
 
-    if($cekStok2 > 0){
+    // Kalau stok masih ada, batalkan penghapusan
+    if ($stok > 0) {
         echo "<script>alert('Stok masih ada!!'); document.location.href='../product.php';</script>";
         exit;
     }
 
-    // Hapus data admin dari database
+    // Ambil nama file gambar & barcode dari database
+    $gambar = $data["f_gambar"]; // pastikan nama kolom gambar benar
+    $barcode = $data["f_barcode"]; // pastikan nama kolom barcode benar
+
+    // Hapus file gambar jika ada
+    if (!empty($gambar)) {
+        $pathGambar = $gambar; // sesuaikan folder upload gambar
+        if (file_exists($pathGambar)) {
+            unlink($pathGambar);
+
+        }
+    }
+
+    // Hapus file barcode jika ada
+    if (!empty($barcode)) {
+        $pathBarcode = "../../../src/barcodes/". $barcode; // sesuaikan folder barcode
+        if (file_exists($pathBarcode)) {
+            unlink($pathBarcode);
+        }
+    }
+
+    // Hapus data produk
     $query_delete = "DELETE FROM t_produk WHERE f_id = '$id'";
     if (mysqli_query($conn, $query_delete)) {
         echo "<script>alert('Data Berhasil Dihapus'); document.location.href='../product.php';</script>";
@@ -66,6 +90,7 @@ if  (isset($_GET["IDP"])) {
         echo "<script>alert('Data Gagal Dihapus'); document.location.href='../product.php';</script>";
     }
 }
+
 
 if (isset($_GET["IDK"])) {
     $id = $_GET["IDK"];

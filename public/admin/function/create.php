@@ -2,7 +2,7 @@
 
 require '../../../src/vendor/autoload.php'; // pastikan sudah install via composer
 
-use Picqer\Barcode\BarcodeGeneratorPNG;
+use Picqer\Barcode\BarcodeGeneratorSVG;
 
 include("../../../src/config.php");
 
@@ -110,7 +110,6 @@ if(isset($_POST["kategori"])){
 
 if(isset($_POST["product"])){
     $name = htmlspecialchars($_POST["name"]) ?? "";
-    $kodeP = htmlspecialchars($_POST["kode_produk"]) ?? "";
     $price = htmlspecialchars($_POST["price"]) ?? "";
     $modal = htmlspecialchars($_POST["modal_price"]) ?? "";
     $stock = htmlspecialchars($_POST["stock"]) ?? "";
@@ -118,7 +117,7 @@ if(isset($_POST["product"])){
     $tgl_exp = htmlspecialchars($_POST["expired_date"]) ?? "";
     $deskripsi = htmlspecialchars($_POST["description"]) ?? "";
 
-    if(empty($name) || empty($kodeP) || empty($price) || empty($modal) || empty($stock) || empty($kategori) 
+    if(empty($name) || empty($price) || empty($modal) || empty($stock) || empty($kategori) 
         || empty($tgl_exp) || empty($deskripsi)){
         echo "<script>alert('Data yang dikirimkan belum lengkap!!');document.location.href='../product.php'";
         exit;
@@ -129,7 +128,7 @@ if(isset($_POST["product"])){
     $gambar = upload();
 
     // Cek apakah data sudah pernah ditambahkan
-    $cekData = mysqli_query($conn, "SELECT * FROM t_produk WHERE f_nama_produk = '$name' OR f_kodep = '$kodeP'");
+    $cekData = mysqli_query($conn, "SELECT * FROM t_produk WHERE f_nama_produk = '$name' ");
     if($cekData->num_rows > 0){
         echo "<script>alert('Data produk sudah ada!!');document.location.href='../product.php'";    
         exit;
@@ -141,16 +140,16 @@ if(isset($_POST["product"])){
     $id = $row ? $row["f_id"] + 1 : 1;
 
     // Inisialisasi barcode generator
-    $generator = new BarcodeGeneratorPNG();
+    $generator = new BarcodeGeneratorSVG();
 
-    // Menentukan nama file berdasarkan ID Produk (misalnya barcode_1.png)
-    $file_name = 'barcode_' . $kodeP . '.png';
+    // Menentukan nama file berdasarkan ID Produk (misalnya barcode_1.svg)
+    $file_name = 'barcode_' . $id . '.svg';
     $file_path = '../../../asset/barcodes/' . $file_name; // Direktori 'barcodes' harus ada
 
     // Generate barcode dan simpan sebagai file PNG
-    file_put_contents($file_path, $generator->getBarcode($kodeP, $generator::TYPE_CODE_128));
+    file_put_contents($file_path, $generator->getBarcode($id, $generator::TYPE_CODE_128));
 
-    $query = "INSERT INTO t_produk VALUES('$id', '$kodeP','$name','$tgl_exp','$stock','$modal','$price','$keuntungan','$kategori','$gambar', '$file_name', '$deskripsi')";
+    $query = "INSERT INTO t_produk VALUES('$id','$name','$tgl_exp','$stock','$modal','$price','$keuntungan','$kategori','$gambar', '$file_name', '$deskripsi')";
 
     if(mysqli_query($conn, $query)){
         echo "<script>alert('Produk berhasil ditambahkan!!'); document.location.href='../product.php'</script>";
@@ -407,20 +406,6 @@ function upload(){
                         </svg>
                         </div>
                         <input type="text" id="name" name="name" class="mt-1 block w-full pl-10 border border-gray-300 rounded-lg shadow-sm p-2.5 focus:ring-blue-500 focus:border-blue-500" placeholder="Type product name" required>
-                    </div>
-                    </div>
-
-                    <!-- Kode Produk -->
-                    <div class="sm:col-span-2">
-                    <label for="kode_produk" class="block text-sm font-medium text-gray-700">Kode Produk</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <!-- Barcode Icon -->
-                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h1m2 0h1m2 0h1m2 0h1m2 0h1m2 0h1M4 17h16M4 12h16" />
-                        </svg>
-                        </div>
-                        <input type="text" id="kode_produk" name="kode_produk" class="mt-1 block w-full pl-10 border border-gray-300 rounded-lg shadow-sm p-2.5 focus:ring-blue-500 focus:border-blue-500" placeholder="Contoh: PRD001" required>
                     </div>
                     </div>
 

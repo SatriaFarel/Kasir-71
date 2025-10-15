@@ -25,7 +25,14 @@ $query = "SELECT
           WHERE t.f_id_transaksi = '$id' 
           GROUP BY t.f_id_transaksi";
 $result = mysqli_query($conn, $query);
+
+if (!$result || mysqli_num_rows($result) == 0) {
+    echo "<script>alert('Data transaksi tidak ditemukan!'); window.location='laporan.php';</script>";
+    exit();
+}
+
 $row = mysqli_fetch_assoc($result);
+
 
 // Format tanggal
 $tanggal_pembelian = date("d F Y", strtotime($row['f_tanggal_pembelian']));

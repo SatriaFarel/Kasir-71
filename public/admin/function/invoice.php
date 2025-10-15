@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $totalBayar = $_POST['bayar'];
 
     $redeemPoint = (int) ($_POST["redeemPoints"] ?? 0);
-    $memberId    = mysqli_real_escape_string($conn, $_POST['member'] ?? "");
+    $memberId    = mysqli_real_escape_string($conn, $_POST['memberId'] ?? "");
     $date        = date("Y-m-d");
 
     if ($redeemPoint > 0 && !empty($memberId)) {

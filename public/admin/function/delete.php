@@ -63,7 +63,7 @@ if (isset($_GET["IDP"])) {
 
     // Ambil nama file gambar & barcode dari database
     $gambar = $data["f_gambar"]; // pastikan nama kolom gambar benar
-    $barcode = $data["f_barcode"]; // pastikan nama kolom barcode benar
+    $barcode = $data["f_qr"]; // pastikan nama kolom barcode benar
 
     // Hapus file gambar jika ada
     if (!empty($gambar)) {
@@ -104,9 +104,9 @@ if (isset($_GET["IDK"])) {
     // Hapus data admin dari database
     $query_delete = "DELETE FROM t_kategori WHERE f_id = '$id'";
     if (mysqli_query($conn, $query_delete)) {
-        echo "<script>alert('Data Berhasil Dihapus'); document.location.href='../product.php?ket=$id';</script>";
+        echo "<script>alert('Data Berhasil Dihapus'); document.location.href='../product.php?';</script>";
     } else {
-        echo "<script>alert('Data Gagal Dihapus'); document.location.href='../product.php?ket=$id';</script>";
+        echo "<script>alert('Data Gagal Dihapus'); document.location.href='../product.php';</script>";
     }
 }
 

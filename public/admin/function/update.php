@@ -103,7 +103,7 @@
         }
 
         // Cek apakah username atau email sudah ada di database
-        $cek = mysqli_query($conn, "SELECT * FROM t_member WHERE (f_nama_member = '$nama' OR f_no_telp = '$telp') AND f_id != $id");
+        $cek = mysqli_query($conn, "SELECT * FROM t_member WHERE f_no_telp = '$telp' AND f_id != $id");
         if (mysqli_num_rows($cek) > 0) {
             echo "<script>alert('Member sudah terdaftar!');document.location.href='../member.php';</script>";
             exit;
@@ -356,7 +356,7 @@
                                 </div>
                                 <select id="status" name="status" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pl-10">
                                     <option value="Aktif" <?= ($row['f_status'] == 'Aktif' ? 'selected' : ''); ?>>Aktif</option>
-                                    <option value="Tidak Aktir" <?= ($row['f_status'] == 'Tidak aktif' ? 'selected' : ''); ?>>Non Aktif</option>
+                                    <option value="Tidak Aktif" <?= ($row['f_status'] == 'Tidak Aktif' ? 'selected' : ''); ?>>Non Aktif</option>
                                 </select>
                             </div>
                         </div>

@@ -2,15 +2,50 @@
 $barcode = isset($_GET['barcode']) ? trim($_GET['barcode']) : null;
 
 if ($barcode) {
-    // Tampilkan alert JS dan redirect pakai JavaScript
+    // koneksi ke database
+    include '../../src/config.php'; // pastikan $conn sudah tersedia
+
+    // ambil data produk berdasarkan barcode
+    $query = mysqli_query($conn, "SELECT * FROM t_produk WHERE f_id = '$barcode'");
+    $produk = mysqli_fetch_assoc($query);
+
+    if (!$produk) {
+        echo "<script>alert('Produk tidak ditemukan!');window.location.href='keranjang.php';</script>";
+        exit();
+    }
+
+    // cek stok
+    if ($produk['f_stok'] <= 0) {
+        echo "<script>alert('Stok produk habis!');window.location.href='keranjang.php';</script>";
+        exit();
+    }
+
+    // cek kadaluarsa
+    $today = date('Y-m-d');
+    if (!empty($produk['f_kadaluarsa']) && $produk['f_kadaluarsa'] < $today) {
+        echo "<script>alert('Produk sudah kadaluarsa!');window.location.href='keranjang.php';</script>";
+        exit();
+    }
+
+    // minta jumlah produk dan cek apakah melebihi stok
     echo "<script>
-        let tambahan = prompt('Masukkan jumlah produk untuk barcode: $barcode');
-        if (tambahan !== null) {
-            // redirect ke keranjang.php dengan 2 parameter (id & quantity)
-            window.location.href = 'keranjang.php?id=" . $barcode . "&quantity=' + encodeURIComponent(tambahan);
+        let stok = {$produk['f_stok']};
+        let namaProduk = '" . addslashes($produk['f_nama_produk']) . "';
+        let jumlah = prompt('Masukkan jumlah produk untuk: ' + namaProduk + ' (stok tersedia: ' + stok + ')');
+
+        if (jumlah !== null) {
+            jumlah = parseInt(jumlah);
+            if (isNaN(jumlah) || jumlah <= 0) {
+                alert('Jumlah tidak valid!');
+                window.location.href = 'keranjang.php';
+            } else if (jumlah > stok) {
+                alert('Jumlah melebihi stok!');
+                window.location.href = 'keranjang.php';
+            } else {
+                window.location.href = 'keranjang.php?id={$barcode}&quantity=' + jumlah;
+            }
         } else {
-            // kalau dibatalin, balik ke index
-            window.location.href = 'index.php';
+            window.location.href = 'keranjang.php';
         }
     </script>";
     exit();
@@ -73,7 +108,6 @@ if ($barcode) {
         let timeout = null;
 
         document.addEventListener("keypress", function(e) {
-            // Abaikan Enter biar gak ikut kebaca
             if (e.key === "Enter") {
                 e.preventDefault();
                 return;
@@ -84,7 +118,6 @@ if ($barcode) {
 
             timeout = setTimeout(() => {
                 if (buffer.length > 0) {
-                    // reload halaman + kirim barcode
                     window.location.href = "?barcode=" + buffer.trim();
                     buffer = "";
                 }

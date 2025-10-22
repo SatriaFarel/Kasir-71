@@ -25,7 +25,7 @@
             if(!empty($remember)){
                 setcookie("id",$_SESSION["id"],time()+3600, "/");
             }
-            echo "<script>alert('Berhasil login ". $username ."');document.location.href='public/Admin/home.php';</script>";
+            echo "<script>alert('Berhasil login ". $username ."');document.location.href='public/admin/home.php';</script>";
             exit;
         }else{
             echo "<script>alert('Email / Password salah');</script>";

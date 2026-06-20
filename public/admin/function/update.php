@@ -3,20 +3,22 @@
     session_start();
 
     // Fungsi untuk mengupload gambar
-    function uploadGambar($file, $id = null) {
-        $uploadDir = "../../../asset/pfp/"; // Path tempat menyimpan gambar
-        $dbPath = "../../asset/pfp/"; // Path yang disimpan di database
+    function uploadGambar($file, $id = null, $type = null) {
+        $uploadDir = $type == "t_admin" ? "../../../asset/pfp/" : "../../../asset/product/"; // Path tempat menyimpan gambar
+        $dbPath = $type == "t_admin" ? "../../asset/pfp/" : "../../asset/product/"; // Path yang disimpan di database
 
         // Jika ada ID, cek dan hapus gambar lama
-        if ($id) {
+        if ($id && $type) {
             global $conn;
-            $query = "SELECT f_gambar FROM t_admin WHERE f_id = '$id'";
+            $query = "SELECT f_gambar FROM $type WHERE f_id = '$id'";
             $result = mysqli_query($conn, $query);
             if ($result && mysqli_num_rows($result) > 0) {
                 $row = mysqli_fetch_assoc($result);
                 $oldFile = $uploadDir . basename($row["f_gambar"]);
                 if (!empty($row["f_gambar"]) && file_exists($oldFile)) {
-                    unlink($oldFile);
+                    unlink($oldFile);$ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                    $gambar = bin2hex(random_bytes(5)) . '.' . $ext;
+                    move_uploaded_file($file['tmp_name'], $uploadDir . $gambar);
                 }
             }
         }
@@ -75,7 +77,7 @@
 
         // Cek apakah ada gambar baru yang diupload
         if (!empty($_FILES["gambarNow"]["name"])) {
-            $gambar = uploadGambar($_FILES["gambarNow"], $id); // Panggil fungsi upload gambar
+            $gambar = uploadGambar($_FILES["gambarNow"], $id, "t_admin"); // Panggil fungsi upload gambar
         }
 
         // Update data admin
@@ -157,20 +159,20 @@
     
         if(empty($name) || empty($price) || empty($modal) || $stock < 0 || empty($kategori) 
             || empty($tgl_exp) || empty($deskripsi) ){
-            echo "<script>alert('Data yang dikirimkan belum lengkap!!');document.location.href='../product.php'";
+            echo "<script>alert('Data yang dikirimkan belum lengkap!!');</script>";
         }
 
         // Cek apakah username atau email sudah ada di database
         $cek = mysqli_query($conn, "SELECT * FROM t_produk WHERE f_nama_produk = '$name' AND f_id != '$id'");
         if (mysqli_num_rows($cek) > 0) {
-            echo "<script>alert('Produk sudah terdaftar!');document.location.href='../product.php';</script>";
+            echo "<script>alert('Produk sudah terdaftar!');</script>";
             exit;
         }
     
         $keuntungan = ($price - $modal) * $stock ;
     
         if (!empty($_FILES["gambarNow"]["name"])) {
-            $gambar = uploadGambar($_FILES["gambarNow"], $id); // Panggil fungsi upload gambar
+            $gambar = uploadGambar($_FILES["gambarNow"], $id, "t_produk"); // Panggil fungsi upload gambar
         }
     
         $query = "UPDATE t_produk 
@@ -187,9 +189,9 @@
 
     
         if(mysqli_query($conn, $query)){
-            echo "<script>alert('Produk berhasil diubah!!');document.location.href='../product.php' </script>";
+            echo "<script>alert('Produk berhasil diubah!!');</script>";
         }else{
-            echo "<script>alert('Produk gagal diubah!!');document.location.href='../product.php';</script>";
+            echo "<script>alert('Produk gagal diubah!!');</script>";
         }
     
     }
